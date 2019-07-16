@@ -16,15 +16,12 @@ model = fscnca(spectral_data, classification);
 
 percentile = 97;
 cutoff = prctile(model.FeatureWeights, percentile);
-reduced = zeros(height, 1);
-reduced(:, 1) = data(:, 1)
+reduced = data;
 
-%create matrix containing only data from important bands
-for band = 2:1:width-1
-    if model.FeatureWeights(band) > cutoff
-        reduced = [reduced data(:, band)];
+for band = width-1:-1:1
+    if model.FeatureWeights(band) < cutoff
+        reduced(:, band) = [];
     end
 end
-
 
 %end
