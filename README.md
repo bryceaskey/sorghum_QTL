@@ -1,4 +1,4 @@
-# sorghum_investigation
+# sorghum_QTL
 
 computer_vision contains all MATLAB code for RGB image segmentation, and phenotypic trait measurement.
 
