@@ -1,6 +1,6 @@
 ## R code for data preparation, genetic map construction, and multiple QTL mapping.
 
-Genotype data source:
+### Genotype data source:
 Kong, W., Kim, C., Zhang, D., Guo, H., Tan, X., Jin, H., Zhou, C., Shuang, L., et al. (2018). Genotyping by Sequencing of 393 Sorghum bicolor BTx623 × IS3620C Recombinant Inbred Lines Improves Sensitivity and Resolution of QTL Detection. G3: Genes, Genomes, Genetics, 8(8), 2563-2572.
 
 Genetic map constructed with ASMap package in R:
