@@ -123,6 +123,6 @@ for ii = 1:1:length(all_subfolders)
     
     %write AllData to .csv file in folder containing all image folders
     table = cell2table(AllData, 'VariableNames', {'fileName', 'medianLeafCount', 'maxLeafCount', 'leafAngle', 'stalkHeight', 'panicleExsertion'});
-    writetable(table, 'totalFolderName')
+    writetable(table, strcat(totalFolderName, '/phenotypeData.csv'))
     
 end
