@@ -1,11 +1,10 @@
 clc; clear; close all
 warning('off', 'all')
 
-total_folder_name = '/home/schnable/Desktop/SorghumSeedImages/SorghumImages';
+total_folder_name = '...';
 folder_paths = [];
 all_subfolders = dir(total_folder_name);
-
-AllData = cell(length(all_subfolders), 6);
+AllData = cell(length(all_subfolders), 6); %fileName/medianLeafCount/maxLeafCount/leafAngle/stalkHeight/panicleExsertion
 
 for ii = 1:1:length(all_subfolders)
     folder_name = strcat(all_subfolders(ii).folder, '/', all_subfolders(ii).name);
@@ -24,7 +23,10 @@ for ii = 1:1:length(all_subfolders)
     %create table to hold all measured traits for a single plant
     for jj = 1:1:length(all_image_subfolders)
         image_subfolder_name = all_image_subfolders(jj).name;
+        %each RGB image is saved in folder with name containing Vis_SV
+        %image angle is also included in folder name
         if contains(image_subfolder_name, 'Vis_SV')
+            %all RGB images are named '0_0_0.png'
             filename = strcat(all_image_subfolders(jj).folder, '/', image_subfolder_name, '/0_0_0.png');
             all_plant = NaN;
             [image, all_plant, stake, stake_bin] = stake_segmentation(filename, b_threshold, L_threshold);
@@ -119,7 +121,8 @@ for ii = 1:1:length(all_subfolders)
     AllData{ii, 5} = StalkHeight;
     AllData{ii, 6} = PanicleExsertion;
     
+    %write AllData to .csv file in folder containing all image folders
     table = cell2table(AllData, 'VariableNames', {'fileName', 'medianLeafCount', 'maxLeafCount', 'leafAngle', 'stalkHeight', 'panicleExsertion'});
-    writetable(table, '/home/schnable/Documents/MATLAB/finalWorkflow/phenotypeData.csv')
+    writetable(table, 'totalFolderName')
     
 end
