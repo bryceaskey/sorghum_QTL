@@ -1,12 +1,12 @@
 clc; clear; close all
 warning('off', 'all')
 
-total_folder_name = '...';
+total_folder_name = '\\client\d$\sorghumImages';
 folder_paths = [];
 all_subfolders = dir(total_folder_name);
 AllData = cell(length(all_subfolders), 6); %fileName/medianLeafCount/maxLeafCount/leafAngle/stalkHeight/panicleExsertion
 
-for ii = 1:1:length(all_subfolders)
+for ii = 6:1:6  %length(all_subfolders)
     folder_name = strcat(all_subfolders(ii).folder, '/', all_subfolders(ii).name);
     fprintf('Now analyzing %s\n', all_subfolders(ii).name)
 
@@ -29,25 +29,37 @@ for ii = 1:1:length(all_subfolders)
             %all RGB images are named '0_0_0.png'
             filename = strcat(all_image_subfolders(jj).folder, '/', image_subfolder_name, '/0_0_0.png');
             all_plant = NaN;
-            [image, all_plant, stake, stake_bin] = stake_segmentation(filename, b_threshold, L_threshold);
+            
+            disp('Segmenting stake')
+            [image, all_plant, stake] = stake_segmentation(filename, b_threshold, L_threshold);
             
             if ~isnan(all_plant)
                 panicle_row = NaN;
+                
+                disp('Identifying panicle')
                 [panicle_row, panicle_col, circle_rows, circle_cols] = panicle_identification(all_plant, image, stake);
                 
                 if ~isnan(panicle_row)
                     stalk_line = NaN;
+                    
+                    disp('Identifying stalk')
                     [all_plant, stalk_line, stalk_bot, panicle_base] = stalk_identification(all_plant, image, panicle_row, panicle_col, circle_rows, circle_cols);
                     
                     if ~isnan(stalk_line)
                         segmented_image = NaN;
+                        
+                        disp('Segmenting image')
                         [segmented_image, stalk, panicle, leaves, width_coeffs] = image_segmentation(all_plant, panicle_base, panicle_row, panicle_col, stalk_line, stalk_bot, stake);
                         
                         if ~isnan(segmented_image)
-                            [all_plant, segmented_image] = remove_pot(all_plant, segmented_image, stalk, stake);
-                            [skeleton, endpoints, left_leaf_count, right_leaf_count] = leaf_counting_v2(all_plant, stake, stalk, panicle, stalk_line);
-                            LeafCount = [LeafCount; left_leaf_count + right_leaf_count];
                             
+                            disp('Removing pot')
+                            [all_plant, segmented_image] = remove_pot(all_plant, segmented_image, stalk, stake);
+                            
+                            disp('Counting leaves')
+                            [skeleton, endpoints, left_leaf_count, right_leaf_count] = leaf_counting_v2(all_plant, stake, stalk, panicle, stalk_line);
+                            
+                            LeafCount = [LeafCount; left_leaf_count + right_leaf_count];
                             LeafAngleData{end + 1, 1} = left_leaf_count + right_leaf_count;
                             LeafAngleData{end, 2} = all_plant;
                             LeafAngleData{end, 3} = skeleton;
@@ -96,6 +108,7 @@ for ii = 1:1:length(all_subfolders)
             stalk_bot = LeafAngleData{ind, 8};
             panicle_base = LeafAngleData{ind, 9};
 
+            disp("Measuring leaf angle")
             [average_angle, flag_leaf_node] = leaf_angle_v2(all_plant, skeleton, stalk, stalk_line, stake, endpoints);
 
             if ~isnan(average_angle)
@@ -121,8 +134,8 @@ for ii = 1:1:length(all_subfolders)
     AllData{ii, 5} = StalkHeight;
     AllData{ii, 6} = PanicleExsertion;
     
-    %write AllData to .csv file in folder containing all image folders
+    %write AllData to .csv file in current working directory
     table = cell2table(AllData, 'VariableNames', {'fileName', 'medianLeafCount', 'maxLeafCount', 'leafAngle', 'stalkHeight', 'panicleExsertion'});
-    writetable(table, strcat(totalFolderName, '/phenotypeData.csv'))
+    writetable(table, strcat(pwd, '/phenotypeData.csv'))
     
 end

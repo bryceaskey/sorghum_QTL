@@ -32,7 +32,7 @@ end
 pot_top = min(mean_pot(:, 1));
 pot_mid = round(mean(mean_pot(:, 2)));
 
-%starting at left side of pot, test points outward until plant is found
+%starting at center of pot, test points outward until plant is found
 %test 100 left, and 100 right - width of pot
 %calculate distance of each continuous region from pot_mid
 plant_points = [];
@@ -287,9 +287,6 @@ if median_plant(stalk_bot(1), stalk_bot(2)) == 1 && median_plant(panicle_end(1),
     fin_ID = sub2ind([height, width], panicle_end(1), panicle_end(2));
 
     [~, path] = dijkstra(nodes, segments, start_ID, fin_ID);
-
-
-
 
     path_coordinates = zeros(length(path), 2);
     for pixel = 1:1:length(path)

@@ -135,7 +135,6 @@ if sum(sum(endpoints)) > 0
                 if isempty(paths) || length(paths{1, 1}) > length_cutoff %all paths have been completed
                     %remove duplicate paths from completed_paths -> paths which share 95% of points in common
                     %keeps shortest unique path
-                    %if ~isempty(completed_paths
                     for path1_num = length(completed_paths(:, 1)):-1:1
                         path1 = completed_paths{path1_num, 1};
                         unique = 1;

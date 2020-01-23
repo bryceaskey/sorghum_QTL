@@ -2,7 +2,7 @@
 %removes background pixels from image
 %identifies and separates stake pixels if a plant is staked
 
-function [image, all_plant, stake, stake_bin] = stake_segmentation(filename, b_threshold, L_threshold)
+function [image, all_plant, stake] = stake_segmentation(filename, b_threshold, L_threshold)
 image = imread(filename);
 image = imcrop(image, [900, 300, 799, 1449]);
 image = rgb2lab(image);
@@ -134,7 +134,6 @@ if sum(sum(to_search)) > 500
             end
         end
     else
-        stake_bin = 0;
         stake(:, :) = 0;
     end
 
@@ -151,7 +150,6 @@ if sum(sum(to_search)) > 500
 else
     all_plant = NaN;
     stake = NaN;
-    stake_bin = NaN;
 end
 
 end
