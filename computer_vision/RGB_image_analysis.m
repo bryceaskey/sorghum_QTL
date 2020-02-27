@@ -4,10 +4,10 @@ warning('off', 'all')
 total_folder_name = '\\client\d$\sorghumImages';
 folder_paths = [];
 all_subfolders = dir(total_folder_name);
-AllData = cell(length(all_subfolders), 6); %fileName/medianLeafCount/maxLeafCount/leafAngle/stalkHeight/panicleExsertion
+AllData = cell(length(all_subfolders), 7); %fileName/medianLeafCount/maxLeafCount/leafAngle/stalkHeight/panicleExsertion
 
-for ii = 6:1:6  %length(all_subfolders)
-    folder_name = strcat(all_subfolders(ii).folder, '/', all_subfolders(ii).name);
+for ii = 450:1:length(all_subfolders)
+    folder_name = strcat(all_subfolders(ii).folder, '\', all_subfolders(ii).name);
     fprintf('Now analyzing %s\n', all_subfolders(ii).name)
 
     LeafAngleData = {}; %stores necessary data for leaf angle measurements -> only need to measure for image w/ greatest # of leaves
@@ -27,6 +27,7 @@ for ii = 6:1:6  %length(all_subfolders)
         %image angle is also included in folder name
         if contains(image_subfolder_name, 'Vis_SV')
             %all RGB images are named '0_0_0.png'
+            camera_angle = all_image_subfolders(jj).name;
             filename = strcat(all_image_subfolders(jj).folder, '/', image_subfolder_name, '/0_0_0.png');
             all_plant = NaN;
             
@@ -69,7 +70,7 @@ for ii = 6:1:6  %length(all_subfolders)
                             LeafAngleData{end, 7} = endpoints;
                             LeafAngleData{end, 8} = stalk_bot;
                             LeafAngleData{end, 9} = panicle_base;
-
+                            LeafAngleData{end, 10} = camera_angle;
                         else
                             LeafCount = [LeafCount; NaN];
                         end
@@ -92,13 +93,14 @@ for ii = 6:1:6  %length(all_subfolders)
     LeafAngle = NaN;
     StalkHeight = NaN;
     PanicleExsertion = NaN;
+    CameraAngle = NaN;
     
     if ~isnan(MaxLeaves)
         if MaxLeaves > 0 && MaxLeaves < 16
         
             ind = find([LeafAngleData{:, 1}] == MaxLeaves);
             ind = ind(1);
-
+            
             all_plant = LeafAngleData{ind, 2};
             skeleton = LeafAngleData{ind, 3};
             stalk = LeafAngleData{ind, 4};
@@ -107,6 +109,7 @@ for ii = 6:1:6  %length(all_subfolders)
             endpoints = LeafAngleData{ind, 7};
             stalk_bot = LeafAngleData{ind, 8};
             panicle_base = LeafAngleData{ind, 9};
+            CameraAngle = LeafAngleData{ind, 10};
 
             disp("Measuring leaf angle")
             [average_angle, flag_leaf_node] = leaf_angle_v2(all_plant, skeleton, stalk, stalk_line, stake, endpoints);
@@ -128,14 +131,16 @@ for ii = 6:1:6  %length(all_subfolders)
     end
         
     AllData{ii, 1} = all_subfolders(ii).name;
-    AllData{ii, 2} = MedianLeaves;
-    AllData{ii, 3} = MaxLeaves;
-    AllData{ii, 4} = LeafAngle;
-    AllData{ii, 5} = StalkHeight;
-    AllData{ii, 6} = PanicleExsertion;
+    AllData{ii, 2} = CameraAngle;
+    AllData{ii, 3} = MedianLeaves;
+    AllData{ii, 4} = MaxLeaves;
+    AllData{ii, 5} = LeafAngle;
+    AllData{ii, 6} = StalkHeight;
+    AllData{ii, 7} = PanicleExsertion;
+
     
     %write AllData to .csv file in current working directory
-    table = cell2table(AllData, 'VariableNames', {'fileName', 'medianLeafCount', 'maxLeafCount', 'leafAngle', 'stalkHeight', 'panicleExsertion'});
-    writetable(table, strcat(pwd, '/phenotypeData.csv'))
-    
+    table = cell2table(AllData, 'VariableNames', {'fileName', 'cameraAngle', 'medianLeafCount', 'maxLeafCount', 'leafAngle', 'stalkHeight', 'panicleExsertion'});
+    writetable(table, strcat(pwd, '/phenotypeData_withCamAngle8.csv'))
+     
 end
