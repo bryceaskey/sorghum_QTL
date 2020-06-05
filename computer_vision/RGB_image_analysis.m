@@ -4,9 +4,9 @@ warning('off', 'all')
 total_folder_name = '\\client\d$\sorghumImages';
 folder_paths = [];
 all_subfolders = dir(total_folder_name);
-AllData = cell(length(all_subfolders), 7); %fileName/medianLeafCount/maxLeafCount/leafAngle/stalkHeight/panicleExsertion
+AllData = cell(length(all_subfolders), 7); %fileName/cameraAngle/medianLeafCount/maxLeafCount/leafAngle/stalkHeight/panicleExsertion
 
-for ii = 450:1:length(all_subfolders)
+for ii = 5:1:length(all_subfolders)
     folder_name = strcat(all_subfolders(ii).folder, '\', all_subfolders(ii).name);
     fprintf('Now analyzing %s\n', all_subfolders(ii).name)
 
@@ -141,6 +141,6 @@ for ii = 450:1:length(all_subfolders)
     
     %write AllData to .csv file in current working directory
     table = cell2table(AllData, 'VariableNames', {'fileName', 'cameraAngle', 'medianLeafCount', 'maxLeafCount', 'leafAngle', 'stalkHeight', 'panicleExsertion'});
-    writetable(table, strcat(pwd, '/phenotypeData_withCamAngle8.csv'))
+    writetable(table, strcat(pwd, '/phenotypeData.csv'))
      
 end
